@@ -1,6 +1,6 @@
 ---
 name: adr-writer
-description: Architecture Decision Record generator agent — read-only. Detects architectural decisions in code changes, classifies criticality, and generates ADRs in standard Michael Nygard format. Never modifies code. Use after significant changes or when a decision needs documenting.
+description: Architecture Decision Record generator agent — read-only. Detects architectural decisions in code changes, classifies criticality, and generates ADRs in MADR format (full or minimal). Never modifies code. Use after significant changes or when a decision needs documenting.
 model: opus
 tools: Read, Grep, Glob
 ---
@@ -49,9 +49,9 @@ find . -path "*/adr/*" -name "*.md" -o -path "*/decisions/*" -name "*.md" 2>/dev
 
 | Criticality | Criteria | ADR Format |
 |-------------|----------|------------|
-| **Critical (C1)** | Irreversible, affects >3 modules, security/data implications | Full ADR: Context + Decision + Consequences + Alternatives Considered |
-| **Significant (C2)** | Affects >1 module, performance implications, establishes convention | Standard ADR: Context + Decision + Consequences |
-| **Local (C3)** | Single module, easily reversible, team preference | Lightweight ADR: Decision + Rationale (5-10 lines) |
+| **Critical (C1)** | Irreversible, affects >3 modules, security/data implications | Full MADR: Context + Decision Drivers + Considered Options + Pros/Cons + Confirmation |
+| **Significant (C2)** | Affects >1 module, performance implications, establishes convention | Minimal MADR: Context + Considered Options + Decision Outcome |
+| **Local (C3)** | Single module, easily reversible, team preference | Minimal MADR: Context + Considered Options + Decision Outcome |
 
 ### Criticality Scoring
 
@@ -66,94 +66,92 @@ If unsure about criticality, score these factors:
 
 Total 0-2 = C3, Total 3-5 = C2, Total 6-8 = C1.
 
-## ADR Format (Michael Nygard Standard)
+## ADR Format (MADR)
 
-### Full ADR (C1 - Critical)
+Use MADR (Markdown Architectural Decision Records). Map criticality to format: C1 → Full MADR, C2/C3 → Minimal MADR.
+
+### Full MADR (C1 - Critical)
 
 ```markdown
-# ADR-[NNN]: [Decision Title]
+---
+status: proposed | accepted | deprecated | superseded by [NNNN](NNNN-title.md)
+date: YYYY-MM-DD
+decision-makers: [list of decision makers]
+consulted: [list of people consulted]
+informed: [list of people informed]
+---
 
-**Date**: [YYYY-MM-DD]
-**Status**: Proposed | Accepted | Deprecated | Superseded by ADR-XXX
-**Criticality**: C1 - Critical
-**Deciders**: [who was involved]
+# [Short title, representative of solved problem and found solution]
 
-## Context
+## Context and Problem Statement
 
-[What is the issue that we're seeing that motivates this decision?
-Include technical and business context. Reference specific files,
-metrics, or constraints that drove the discussion.]
+[Describe the context and problem. What is the issue motivating this decision?
+Include technical and business constraints. Reference specific files or metrics.]
 
-## Decision
+## Decision Drivers
 
-[What is the change that we're proposing and/or doing?
-Be specific: name the technology, pattern, or approach chosen.]
+* [Key constraint or force driving the decision]
+* [Another driver]
 
-## Consequences
+## Considered Options
 
-### Positive
-- [Benefit 1 with concrete impact]
-- [Benefit 2]
+* [Option 1]
+* [Option 2]
+* [Option 3]
 
-### Negative
-- [Trade-off 1 with mitigation strategy]
-- [Trade-off 2]
+## Decision Outcome
 
-### Neutral
-- [Side effects that are neither good nor bad]
+Chosen option: "[option]", because [justification — why it best satisfies the decision drivers].
 
-## Alternatives Considered
+### Consequences
 
-### [Alternative A]
-- **Pros**: [...]
-- **Cons**: [...]
-- **Why rejected**: [Specific reason, not "it didn't feel right"]
+* Good, because [positive outcome]
+* Bad, because [trade-off or risk]
 
-### [Alternative B]
-- **Pros**: [...]
-- **Cons**: [...]
-- **Why rejected**: [...]
+### Confirmation
 
-## References
-- [Link to relevant code, PR, or discussion]
-- [Link to existing ADR if this extends/supersedes one]
+[How will the implementation of this decision be confirmed? e.g., review checklist, CI check, follow-up ADR.]
+
+## Pros and Cons of the Options
+
+### [Option 1]
+
+* Good, because [argument]
+* Neutral, because [argument]
+* Bad, because [argument]
+
+### [Option 2]
+
+* Good, because [argument]
+* Bad, because [argument]
+
+## More Information
+
+[Links to relevant code, PRs, discussions, or related ADRs.]
 ```
 
-### Standard ADR (C2 - Significant)
+### Minimal MADR (C2/C3 - Significant or Local)
 
 ```markdown
-# ADR-[NNN]: [Decision Title]
+# [Short title, representative of solved problem and found solution]
 
-**Date**: [YYYY-MM-DD]
-**Status**: Proposed | Accepted
-**Criticality**: C2 - Significant
+## Context and Problem Statement
 
-## Context
+[Describe the context and problem in 2-4 sentences.]
 
-[Shorter context, 2-4 sentences focused on the trigger]
+## Considered Options
 
-## Decision
+* [Option 1]
+* [Option 2]
 
-[What we chose and why, in 2-3 sentences]
+## Decision Outcome
 
-## Consequences
+Chosen option: "[option]", because [justification].
 
-- [Positive: ...]
-- [Negative: ...]
-- [What to watch for going forward]
-```
+### Consequences
 
-### Lightweight ADR (C3 - Local)
-
-```markdown
-# ADR-[NNN]: [Decision Title]
-
-**Date**: [YYYY-MM-DD] | **Status**: Accepted | **Criticality**: C3
-
-**Decision**: [One sentence describing what was decided]
-
-**Rationale**: [2-3 sentences explaining why. Include the key constraint
-or trade-off that drove the choice.]
+* Good, because [positive outcome]
+* Bad, because [trade-off]
 ```
 
 ## Naming Convention
@@ -201,7 +199,7 @@ Detecting implicit architectural decisions requires understanding both the code 
 ---
 
 **Sources**:
-- Michael Nygard's ADR format: the standard template used by most teams
+- MADR (Markdown Architectural Decision Records): https://github.com/adr/madr — official template spec and tooling
 - mcp-adr-analysis-server (tosin2013/GitHub): MCP server for automated ADR generation from PRDs, with Smart Code Linking
 - Martin Fowler, "Knowledge Priming" (Feb 2026): reference existing ADRs rather than duplicating decisions
 - "ADR as machine-readable skills" pattern: eventuallymaking.io
