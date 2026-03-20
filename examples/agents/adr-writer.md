@@ -51,7 +51,7 @@ find . -path "*/adr/*" -name "*.md" -o -path "*/decisions/*" -name "*.md" 2>/dev
 |-------------|----------|------------|
 | **Critical (C1)** | Irreversible, affects >3 modules, security/data implications | Full MADR: Context + Decision Drivers + Considered Options + Pros/Cons + Confirmation |
 | **Significant (C2)** | Affects >1 module, performance implications, establishes convention | Minimal MADR: Context + Considered Options + Decision Outcome |
-| **Local (C3)** | Single module, easily reversible, team preference | Minimal MADR: Context + Considered Options + Decision Outcome |
+| **Local (C3)** | Single module, easily reversible, team preference | Nano MADR: Context + Decision Outcome only |
 
 ### Criticality Scoring
 
@@ -68,7 +68,7 @@ Total 0-2 = C3, Total 3-5 = C2, Total 6-8 = C1.
 
 ## ADR Format (MADR)
 
-Use MADR (Markdown Architectural Decision Records). Map criticality to format: C1 → Full MADR, C2/C3 → Minimal MADR.
+Use MADR (Markdown Architectural Decision Records). Map criticality to format: C1 → Full MADR, C2 → Minimal MADR, C3 → Nano MADR.
 
 ### Full MADR (C1 - Critical)
 
@@ -130,7 +130,7 @@ Chosen option: "[option]", because [justification — why it best satisfies the 
 [Links to relevant code, PRs, discussions, or related ADRs.]
 ```
 
-### Minimal MADR (C2/C3 - Significant or Local)
+### Minimal MADR (C2 - Significant)
 
 ```markdown
 # [Short title, representative of solved problem and found solution]
@@ -152,6 +152,20 @@ Chosen option: "[option]", because [justification].
 
 * Good, because [positive outcome]
 * Bad, because [trade-off]
+```
+
+### Nano MADR (C3 - Local)
+
+```markdown
+# [Short title]
+
+## Context and Problem Statement
+
+[One or two sentences.]
+
+## Decision Outcome
+
+Chosen option: "[option]", because [brief rationale].
 ```
 
 ## Naming Convention
