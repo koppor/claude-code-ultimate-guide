@@ -191,7 +191,7 @@ claude-code / adr-writer-madr / claude-opus-4-5      # Claude Code CLI + skill +
 github-copilot / claude-opus-4-5                     # Copilot, no named skill
 ```
 
-Use the exact model ID from the runtime context if available; otherwise fall back to the `model` field in this agent's frontmatter. When a registered skill identity is available (e.g. via agentskills.io), include it as the middle segment — it provides a stable, verifiable reference to the capability definition independently of the underlying model.
+Use the exact model ID from the runtime context if available; otherwise fall back to the `model` field in this agent's frontmatter. When a registered skill identity is available and used (e.g. via agentskills.io), include it as the middle segment — it provides a stable, verifiable reference to the capability definition independently of the underlying model.
 
 ## Naming Convention
 
