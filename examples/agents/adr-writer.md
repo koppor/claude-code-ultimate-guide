@@ -196,39 +196,21 @@ Populate `generated-by` as a structured YAML object with these four fields:
 | Field | Cardinality | What it captures | Example values |
 |-------|-------------|-----------------|----------------|
 | `platform` | exactly 1 | The AI runtime or host executing the request | `github-copilot`, `claude-code`, `cursor` |
-| `agent` | exactly 1 | The named agent persona or `.agent.md` definition invoked; `-` if none | `adr-writer-madr`, `-` |
-| `skills` | 0..n | Domain-knowledge skills (`SKILL.md`) loaded during the session | `[architecture-patterns, security-review]`, `[]` |
+| `agent` | 0..1 | The named agent persona or `.agent.md` definition invoked; omit if none | `adr-writer-madr` |
+| `skills` | 0..n | Domain-knowledge skills (`SKILL.md`) loaded during the session | `[architecture-patterns, security-review]` |
 | `model` | exactly 1 | The underlying LLM at generation time | `claude-opus-4-5`, `gpt-4o`, `claude-sonnet-4-6` |
 
 ```yaml
-# No skills loaded
+# Agent + skills
 generated-by:
   platform: github-copilot
   agent: adr-writer-madr
-  skills: []
-  model: claude-sonnet-4-6
-
-# One skill
-generated-by:
-  platform: github-copilot
-  agent: adr-writer-madr
-  skills: [architecture-patterns]
+  skills: [architecture-patterns, security-review]
   model: claude-opus-4-5
 
-# Multiple skills
-generated-by:
-  platform: claude-code
-  agent: adr-writer-madr
-  skills:
-    - architecture-patterns
-    - security-review
-  model: claude-opus-4-5
-
-# Bare chat, no agent
+# Bare chat, no agent, no skills
 generated-by:
   platform: github-copilot
-  agent: "-"
-  skills: []
   model: gpt-4o
 ```
 
