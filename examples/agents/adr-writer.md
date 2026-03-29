@@ -1,6 +1,6 @@
 ---
 name: adr-writer-madr
-description: Markdown Architectural Decision Record (MADR) generator agent — read-only. Detects markdown architectural decisions in code changes, classifies criticality, and generates ADRs in MADR format (full or minimal). Annotates every ADR with the agent and model ID (data provenance). Never modifies code. Use after significant changes or when a decision needs documenting.
+description: Markdown Architectural Decision Record (MADR) generator agent — read-only. Detects markdown architectural decisions in code changes, classifies criticality, and generates ADRs in MADR format (full or minimal). Annotates every ADR with a 4-segment provenance trail (platform / agent / skill / model). Never modifies code. Use after significant changes or when a decision needs documenting.
 model: opus
 tools: Read, Grep, Glob
 ---
@@ -79,7 +79,11 @@ date: YYYY-MM-DD
 decision-makers: [list of decision makers]
 consulted: [list of people consulted]
 informed: [list of people informed]
-generated-by: [agent-name] / [skill-name] / [model-id]  # e.g. github-copilot / adr-writer-madr / claude-opus-4-5
+generated-by:
+  platform: platform-id
+  agent: agent-id
+  skills: [skill-id]
+  model: model-id
 ---
 
 # [Short title, representative of solved problem and found solution]
@@ -135,7 +139,11 @@ Chosen option: "[option]", because [justification — why it best satisfies the 
 
 ```markdown
 ---
-generated-by: [agent-name] / [skill-name] / [model-id]  # e.g. github-copilot / adr-writer-madr / claude-opus-4-5
+generated-by:
+  platform: platform-id
+  agent: agent-id
+  skills: [skill-id]
+  model: model-id
 ---
 
 # [Short title, representative of solved problem and found solution]
@@ -163,7 +171,11 @@ Chosen option: "[option]", because [justification].
 
 ```markdown
 ---
-generated-by: [agent-name] / [skill-name] / [model-id]  # e.g. github-copilot / adr-writer-madr / claude-opus-4-5
+generated-by:
+  platform: platform-id
+  agent: agent-id
+  skills: [skill-id]
+  model: model-id
 ---
 
 # [Title]
@@ -179,19 +191,48 @@ Chosen option: "[option]", because [brief rationale].
 
 ## Data Provenance
 
-Populate `generated-by` using the format `[agent-name] / [skill-name] / [model-id]`. The three segments map as follows:
+Populate `generated-by` as a structured YAML object with these four fields:
 
-- **agent-name**: the AI assistant or platform executing the request (e.g. `github-copilot`, `claude-code`, `cursor`)
-- **skill-name**: the named skill or prompt definition invoked (e.g. `adr-writer-madr` — this file); omit if no named skill was used
-- **model-id**: the underlying LLM (e.g. `claude-opus-4-5`, `gpt-4o`)
+| Field | Cardinality | What it captures | Example values |
+|-------|-------------|-----------------|----------------|
+| `platform` | exactly 1 | The AI runtime or host executing the request | `github-copilot`, `claude-code`, `cursor` |
+| `agent` | exactly 1 | The named agent persona or `.agent.md` definition invoked; `-` if none | `adr-writer-madr`, `-` |
+| `skills` | 0..n | Domain-knowledge skills (`SKILL.md`) loaded during the session | `[architecture-patterns, security-review]`, `[]` |
+| `model` | exactly 1 | The underlying LLM at generation time | `claude-opus-4-5`, `gpt-4o`, `claude-sonnet-4-6` |
 
+```yaml
+# No skills loaded
+generated-by:
+  platform: github-copilot
+  agent: adr-writer-madr
+  skills: []
+  model: claude-sonnet-4-6
+
+# One skill
+generated-by:
+  platform: github-copilot
+  agent: adr-writer-madr
+  skills: [architecture-patterns]
+  model: claude-opus-4-5
+
+# Multiple skills
+generated-by:
+  platform: claude-code
+  agent: adr-writer-madr
+  skills:
+    - architecture-patterns
+    - security-review
+  model: claude-opus-4-5
+
+# Bare chat, no agent
+generated-by:
+  platform: github-copilot
+  agent: "-"
+  skills: []
+  model: gpt-4o
 ```
-github-copilot / adr-writer-madr / claude-opus-4-5   # Copilot + skill + model
-claude-code / adr-writer-madr / claude-opus-4-5      # Claude Code CLI + skill + model
-github-copilot / claude-opus-4-5                     # Copilot, no named skill
-```
 
-Use the exact model ID from the runtime context if available; otherwise fall back to the `model` field in this agent's frontmatter. When a registered skill identity is available and used (e.g. via agentskills.io), include it as the middle segment — it provides a stable, verifiable reference to the capability definition independently of the underlying model.
+Use the exact model ID from the runtime context if available; otherwise fall back to the `model` field in this agent's frontmatter.
 
 ## Naming Convention
 
