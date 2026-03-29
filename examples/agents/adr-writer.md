@@ -197,7 +197,7 @@ Populate `generated-by` as a structured YAML object with these four fields:
 |-------|-------------|-----------------|----------------|
 | `platform` | exactly 1 | The AI runtime or host executing the request | `github-copilot`, `claude-code`, `cursor` |
 | `agent` | 0..1 | The named agent persona or `.agent.md` definition invoked; omit if none | `adr-writer-madr` |
-| `skills` | 0..n | Domain-knowledge skills (`SKILL.md`) loaded during the session | `[architecture-patterns, security-review]` |
+| `skills` | 0..n | List every source that provided domain knowledge, patterns, or constraints that influenced the content of this ADR (e.g. skills, knowledge-injecting MCP servers, RAG sources). Do not list tools used only to read, write, or query data. | `[architecture-patterns, mcp-adr-analysis]` |
 | `model` | exactly 1 | The underlying LLM at generation time | `claude-opus-4-5`, `gpt-4o`, `claude-sonnet-4-6` |
 
 ```yaml
