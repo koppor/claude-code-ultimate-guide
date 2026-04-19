@@ -20,6 +20,7 @@ Scan recent changes to identify implicit architectural decisions that deserve do
 | Signal | Example | Likely ADR? |
 |--------|---------|-------------|
 | New dependency added | Adding Redis, switching from REST to gRPC | Yes |
+| Dependency removed | Dropping a library, replacing with platform built-in | Yes |
 | New abstraction layer | Introducing a repository pattern, event bus | Yes |
 | Convention established | First use of a pattern that others should follow | Yes |
 | Security boundary | Auth strategy, data encryption approach | Yes |
@@ -27,23 +28,32 @@ Scan recent changes to identify implicit architectural decisions that deserve do
 | Configuration choice | Environment strategy, feature flag approach | Maybe (if cross-cutting) |
 | Refactor within a module | Renaming, restructuring internal code | No |
 | Bug fix | Correcting behavior to match spec | No |
+| Dependency bump | `Chore(deps): Bump X from Y to Z` | No |
+| Translation update | Crowdin / i18n string changes | No |
+| CI/test-only fix | Changes only in test files or CI config | No |
 
 ### Detection Process
 
 ```
-1. Read the changed files (or diff) to understand what happened
-2. Use Grep to check if similar patterns exist elsewhere in the codebase
-3. Use Glob to understand the scope of impact (how many modules affected)
-4. Cross-reference with existing ADRs (if any) to avoid duplication
-5. Classify each detected decision using the criticality matrix below
+1. Filter noise: skip commits whose subject matches Chore(deps), Bump, translations, or test-only fixes
+2. Group related commits: if multiple commits within the same timeframe touch the same subsystem,
+   consider whether they represent one architectural decision or several distinct ones
+3. Read the changed files (or diff) to understand what happened
+4. Use Grep to check if similar patterns exist elsewhere in the codebase
+5. Use Glob to understand the scope of impact (how many modules affected)
+6. Cross-reference with existing ADRs (if any) to avoid duplication
+7. Classify each detected decision using the criticality matrix below
 ```
 
 **Knowledge Priming**: Before writing a new ADR, always check for existing ADRs in the project. Reference them rather than duplicating decisions. If the new decision extends or supersedes an existing one, link to it explicitly.
 
-```bash
-# Check for existing ADRs
-find . -path "*/docs/decisions/*" -name "*.md" 2>/dev/null
+Use the Glob tool to find existing ADRs — check all common conventions:
 ```
+Glob: **/decisions/*.md          # MADR default (docs/decisions/)
+Glob: **/adr/*.md                # classic ADR layout (docs/adr/, adr/)
+Glob: **/architecture/**/*.md    # some teams nest under architecture/decisions/
+```
+Run all three; deduplicate results. The first non-empty match reveals the project's convention — use the same directory for the new ADR.
 
 ## Criticality Matrix
 
@@ -62,9 +72,10 @@ If unsure about criticality, score these factors:
 | Reversibility | Trivial to undo | Moderate effort | Requires rewrite |
 | Scope | Single file | Multiple files/1 module | Cross-module |
 | Data impact | No data changes | Schema change (reversible) | Data migration required |
+| Config/serialization | No stored values change | Stored key/value renamed or restructured | Breaking change to persisted format |
 | Security | No security surface | Indirect security impact | Direct auth/crypto/trust |
 
-Total 0-2 = C3, Total 3-5 = C2, Total 6-8 = C1.
+Total 0-2 = C3, Total 3-6 = C2, Total 7-10 = C1.
 
 ## ADR Format (MADR)
 
