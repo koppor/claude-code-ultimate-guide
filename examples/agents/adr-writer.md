@@ -121,8 +121,9 @@ Chosen option: "[option]", because [justification — why it best satisfies the 
 
 ### Consequences
 
-* Good, because [positive outcome]
-* Bad, because [trade-off or risk]
+<!-- Distill 2-4 bullets from the per-option pros/cons below. Do NOT repeat the full lists here — only the most significant overall impacts of the chosen option. -->
+* Good, because [key positive outcome]
+* Bad, because [key trade-off or risk]
 
 ### Confirmation
 
@@ -174,8 +175,9 @@ Chosen option: "[option]", because [justification].
 
 ### Consequences
 
-* Good, because [positive outcome]
-* Bad, because [trade-off]
+<!-- 1-2 bullets of the chosen option -->
+* Good, because [key positive outcome]
+* Bad, because [key trade-off]
 ```
 
 ### Nano MADR (C3 - Local)
