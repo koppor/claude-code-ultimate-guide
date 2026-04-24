@@ -6,6 +6,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 
 ## [Unreleased]
 
+- **`adr-writer-madr` agent — broader scope + curation** (`examples/agents/adr-writer.md`): Two input modes (repo-audit, diff) over any tracked artifact — source, docs, policies, CI/IaC, schemas, `.claude/` definitions. Full ADR-log lifecycle supported: create, update in place (status changes, completions), and supersede (new ADR + flip old status; never delete). `Edit` added to the agent's `tools:` list.
+
 - **README: Star History chart added** (`README.md`): Dynamic star growth chart from star-history.com embedded before the Contributing section. Shows the repo trajectory since January 2026 (0 → 2K+ stars). Renders live on GitHub via the star-history.com SVG API.
 
 - **Resource Evaluation — Arnaud Gaches "MCP vs CLI" (Dev with IA)** (`docs/resource-evaluations/arnaud-gaches-mcp-vs-cli-devwithia.md`): Score 2/5. Community synthesis from the Dev with IA Slack/LinkedIn (1500+ devs). Key contributions: three-phase historical arc (browser 2022-23 → IDE+MCP 2024-25 → CLI agents 2025-26), update on MCP token cost (author claims unused servers now inject 0 tokens), model-size heuristic (frontier models → CLI, small local models → MCP), enterprise case for MCP Remote (centralized updates, observability). Scored 2/5 for lack of verifiable sources and unclear attribution. Applied: historical arc intro added to `guide/ecosystem/mcp-vs-cli.md`.
